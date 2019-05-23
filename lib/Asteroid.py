@@ -10,17 +10,17 @@ ran_high = 1
 
 
 class Asteroid:
-	w = random.randint(50, 100)
-	h = random.randint(50, 100)
+	w = random.randint(50, 50)
+	h = random.randint(50, 50)
 
 	def __init__(self, starting_pos):
 		self.x, self.y = starting_pos
 
 		self.starting_pos = starting_pos
 		self.angle = 0
-		self.r_vel = random.randint(10, 100) / 1000
-		self.speed_x = random.randint(70, 500) / 100
-		self.speed_y = random.randint(70, 500) / 100
+		self.r_vel = random.randint(10, 30) / 1000
+		self.speed_x = random.randint(70, 100) / 100
+		self.speed_y = random.randint(70, 100) / 100
 		self.start_angle = random.randint(1, 360)
 		self.points = [
 			(0, 0 - self.h),
@@ -34,12 +34,14 @@ class Asteroid:
 			(0, 0 - self.h),
 		]
 
+		self.collision_radius = round((self.w + self.h) / 2)
+
 	def draw(self, surface):
 		self.x += self.speed_x * math.sin(self.start_angle)
 		self.y += self.speed_y * math.cos(self.start_angle)
 
 		points = []
-		ox, oy = self.get_center()
+		ox, oy = self.center()
 		for point in self.points:
 			x, y = point
 			xx = (ox + math.cos(self.angle) * (x - ox) - math.sin(self.angle) * (y - oy)) + self.x
@@ -51,7 +53,7 @@ class Asteroid:
 
 		self.collisions()
 
-	def get_center(self):
+	def center(self):
 		x = [p[0] for p in self.points]
 		y = [p[1] for p in self.points]
 		return sum(x) / len(self.points), sum(y) / len(self.points)

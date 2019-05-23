@@ -7,6 +7,9 @@ from lib.Screen import Screen
 
 class Bullet:
 
+	w = 3
+	h = 6
+
 	def __init__(self, x, y, angle):
 		self.x = x
 		self.y = y
@@ -14,10 +17,11 @@ class Bullet:
 		self.vel = 15
 		self.lifetime = 50
 		self.life = self.lifetime
+		self.collision_radius = self.h
 
-		self.bullet = [
+		self.points = [
+			(0, 3),
 			(0, -3),
-			(0, -6),
 		]
 
 	def draw(self, screen):
@@ -25,14 +29,19 @@ class Bullet:
 		self.y -= self.vel * math.cos(self.angle)
 
 		points = []
-		for point in self.bullet:
-			x = point[0] * math.cos(self.angle) - point[1] * math.sin(self.angle) + self.x + 50
-			y = point[0] * math.sin(self.angle) + point[1] * math.cos(self.angle) + self.y + 50
+		for point in self.points:
+			x = point[0] * math.cos(self.angle) - point[1] * math.sin(self.angle) + self.x
+			y = point[0] * math.sin(self.angle) + point[1] * math.cos(self.angle) + self.y
 			points.append((x, y))
 
 		self.collisions()
 
 		pygame.draw.lines(screen, parameters.COLORS_WHITE, False, points, 3)
+
+	def center(self):
+		x = [p[0] for p in self.points]
+		y = [p[1] for p in self.points]
+		return round(sum(x) / len(self.points)), round(sum(y) / len(self.points))
 
 	def collisions(self):
 		screen_collision_offset = 15

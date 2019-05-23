@@ -1,5 +1,9 @@
 import pygame
 
+from lib import helper
+
+collision_threshold = 10  # in px
+
 
 class CollisionDetector:
 
@@ -18,7 +22,15 @@ class CollisionDetector:
 		return False
 
 	@staticmethod
-	def draw_collider(screen, obj):
+	def circle_collision(a, b):
+		if helper.pythagoras(a.x - b.x, a.y - b.y) < (a.collision_radius + b.collision_radius) - collision_threshold:
+			# Collision
+			return True
+
+		return False
+
+	@staticmethod
+	def draw_box_collider(screen, obj):
 		points = [
 			(obj.x - obj.w, obj.y - obj.h),
 			(obj.x + obj.w, obj.y - obj.h),
@@ -28,6 +40,11 @@ class CollisionDetector:
 
 		]
 		pygame.draw.lines(screen, (0, 255, 0), False, points, 2)
+
+	@staticmethod
+	def draw_circle_collider(screen, obj):
+
+		pygame.draw.circle(screen, (0, 255, 0), (round(obj.x), round(obj.y)), obj.collision_radius, 2)
 
 
 

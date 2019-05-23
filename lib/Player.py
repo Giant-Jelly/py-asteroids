@@ -8,7 +8,7 @@ from lib.Bullet import Bullet
 
 COLORS_WHITE = (255, 255, 255)
 MAX_BULLETS = 3
-SHOOT_DELAY = 5
+SHOOT_DELAY = 10
 
 
 class Player:
@@ -18,8 +18,8 @@ class Player:
 	def __init__(self):
 		self.forward = Vector2(0, -1)
 
-		self.x = 0
-		self.y = 0
+		self.x = Screen.w / 2
+		self.y = Screen.h / 2
 		self.vel = 0.2
 		self.r_vel = 0.1
 		fin_offset = 10
@@ -27,6 +27,7 @@ class Player:
 		self.speed_x = 0
 		self.speed_y = 0
 		self.drag = 0.99
+		self.collision_radius = 27
 
 		self.points = [
 			(0, 0 - (self.h / 2)),
@@ -53,14 +54,14 @@ class Player:
 	def draw(self, screen):
 		self.x += self.speed_x
 		self.y -= self.speed_y
-		points = []
 
+		points = []
+		ox, oy = self.center()
 		for point in self.points:
-			# x = point[0] * math.cos(self.angle) - point[1] * math.sin(self.angle) + self.x + 50
-			# y = point[0] * math.sin(self.angle) + point[1] * math.cos(self.angle) + self.y + 50
-			x = point[0] * math.cos(self.angle) - point[1] * math.sin(self.angle) + self.x + 50
-			y = point[0] * math.sin(self.angle) + point[1] * math.cos(self.angle) + self.y + 50
-			points.append((x, y))
+			x, y = point
+			xx = (ox + math.cos(self.angle) * (x - ox) - math.sin(self.angle) * (y - oy)) + self.x
+			yy = (oy + math.sin(self.angle) * (x - ox) + math.cos(self.angle) * (y - oy)) + self.y
+			points.append((xx, yy))
 
 		self.speed_x *= self.drag
 		self.speed_y *= self.drag
@@ -88,12 +89,14 @@ class Player:
 		self.speed_y += self.vel * math.cos(self.angle)
 
 		points = []
+		ox, oy = self.center()
 		for point in self.booster:
-			x = point[0] * math.cos(self.angle) - point[1] * math.sin(self.angle) + self.x + 50
-			y = point[0] * math.sin(self.angle) + point[1] * math.cos(self.angle) + self.y + 50
-			points.append((x, y))
+			x, y = point
+			xx = (ox + math.cos(self.angle) * (x - ox) - math.sin(self.angle) * (y - oy)) + self.x
+			yy = (oy + math.sin(self.angle) * (x - ox) + math.cos(self.angle) * (y - oy)) + self.y
+			points.append((xx, yy))
 
-		if random.randint(0,10) < 7:
+		if random.randint(0, 10) < 7:
 			pygame.draw.lines(screen, COLORS_WHITE, False, points, 1)
 
 	def shoot(self):
@@ -107,6 +110,11 @@ class Player:
 			self.x = random.randint(10, Screen.w - 10)
 			self.y = random.randint(10, Screen.h - 10)
 			self.teleport_timer = self.teleport_cooldown
+
+	def center(self):
+		x = [p[0] for p in self.points]
+		y = [p[1] for p in self.points]
+		return round(sum(x) / len(self.points)), round(sum(y) / len(self.points))
 
 	def collisions(self):
 		screen_collision_offset = 15
