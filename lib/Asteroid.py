@@ -6,21 +6,29 @@ from lib.Screen import Screen
 
 COLORS_WHITE = (255, 255, 255)
 ran_low = 1
-ran_high = 1
+ran_high = 5
 
 
 class Asteroid:
-	w = random.randint(50, 50)
-	h = random.randint(50, 50)
 
-	def __init__(self, starting_pos):
+	def __init__(self, starting_pos, size):
+		if size == 1:
+			self.w = random.randint(70, 70)
+			self.h = random.randint(70, 70)
+		elif size == 2:
+			self.w = random.randint(40, 40)
+			self.h = random.randint(40, 40)
+		elif size == 3:
+			self.w = random.randint(20, 20)
+			self.h = random.randint(20, 20)
+
 		self.x, self.y = starting_pos
-
+		self.size = size
 		self.starting_pos = starting_pos
 		self.angle = 0
 		self.r_vel = random.randint(10, 30) / 1000
-		self.speed_x = random.randint(70, 100) / 100
-		self.speed_y = random.randint(70, 100) / 100
+		self.speed_x = random.randint(70, 120) / 100
+		self.speed_y = random.randint(70, 120) / 100
 		self.start_angle = random.randint(1, 360)
 		self.points = [
 			(0, 0 - self.h),

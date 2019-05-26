@@ -14,8 +14,8 @@ class Bullet:
 		self.x = x
 		self.y = y
 		self.angle = angle
-		self.vel = 15
-		self.lifetime = 50
+		self.vel = 11
+		self.lifetime = 90
 		self.life = self.lifetime
 		self.collision_radius = self.h
 

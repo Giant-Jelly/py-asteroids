@@ -2,6 +2,7 @@ import pygame
 from pygame.math import Vector2
 import math
 import random
+import time
 
 from lib.Screen import Screen
 from lib.Bullet import Bullet
@@ -16,8 +17,6 @@ class Player:
 	h = 40
 
 	def __init__(self):
-		self.forward = Vector2(0, -1)
-
 		self.x = Screen.w / 2
 		self.y = Screen.h / 2
 		self.vel = 0.2
@@ -28,6 +27,7 @@ class Player:
 		self.speed_y = 0
 		self.drag = 0.99
 		self.collision_radius = 27
+		self.invincible = 0
 
 		self.points = [
 			(0, 0 - (self.h / 2)),
@@ -66,7 +66,11 @@ class Player:
 		self.speed_x *= self.drag
 		self.speed_y *= self.drag
 
-		pygame.draw.lines(screen, COLORS_WHITE, False, points, 1)
+		if not self.invincible:
+			pygame.draw.lines(screen, COLORS_WHITE, False, points, 1)
+		else:
+			if self.invincible % 40 < 20:
+				pygame.draw.lines(screen, COLORS_WHITE, False, points, 1)
 
 		self.collisions()
 
@@ -97,7 +101,11 @@ class Player:
 			points.append((xx, yy))
 
 		if random.randint(0, 10) < 7:
-			pygame.draw.lines(screen, COLORS_WHITE, False, points, 1)
+			if not self.invincible:
+				pygame.draw.lines(screen, COLORS_WHITE, False, points, 1)
+			else:
+				if self.invincible % 40 < 20:
+					pygame.draw.lines(screen, COLORS_WHITE, False, points, 1)
 
 	def shoot(self):
 		if len(self.bullets) < MAX_BULLETS and self.shoot_delay == 0:
@@ -115,6 +123,13 @@ class Player:
 		x = [p[0] for p in self.points]
 		y = [p[1] for p in self.points]
 		return round(sum(x) / len(self.points)), round(sum(y) / len(self.points))
+
+	def reset(self):
+		self.speed_x = 0
+		self.speed_y = 0
+		self.angle = 0
+		self.x = Screen.w / 2
+		self.y = Screen.h / 2
 
 	def collisions(self):
 		screen_collision_offset = 15
